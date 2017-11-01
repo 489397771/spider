@@ -56,7 +56,6 @@ def get_page_detail(boards_id, headers):
             pin_pattern = re.compile(r'{"pin_id":.*?"tags":.*?]', re.S)
             pin_info = pin_pattern.findall(response.text)
             return pin_info
-            # return response.text
     except RequestException:
         print('详情页请求失败')
         return None
