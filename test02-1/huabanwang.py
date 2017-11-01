@@ -143,7 +143,6 @@ def save_img(content, title):
 
 
 def start_thread(pin_id_list, headers, title):
-    # 先将pin_id_list处理成单个的
     if len(pin_id_list) < 0:
         print('开启线程1')
         for i in range(len(pin_id_list)):
