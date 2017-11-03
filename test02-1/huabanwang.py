@@ -64,6 +64,7 @@ def get_page_detail(boards_id, headers):
 def get_detail_data(detail):
     detail_pattern = re.compile(r'pin_id":(\d+)', re.S)
     detail_data = detail_pattern.findall(str(detail))
+    print(detail_data)
     return detail_data
 
 
@@ -104,6 +105,7 @@ def get_img_data(pin_id, headers, title):
 
 def get_doc(url, param):
     if url:
+        print(url)
         driver.get(url)
         wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, param)))
         html = driver.page_source
@@ -143,9 +145,9 @@ def save_img(content, title):
 
 
 def start_thread(pin_id_list, headers, title):
-    if len(pin_id_list) < 0:
-        print('开启线程1')
-        for i in range(len(pin_id_list)):
+    if len(pin_id_list) > 0:
+        print('开启线程')
+        for i in range(2):
             t = Thread(target=get_img_data, args=(pin_id_list[i], headers, title))
             t.start()
     else:
@@ -161,17 +163,17 @@ def main(headers):
             board_data = get_page_data(str(info[:80]))
             detail_list = get_page_detail(board_data['board_id'], headers)
             pin_id_list = get_detail_data(detail_list)
-            pin_index_list = [pin_id_list[-1]]
-            for pinid in pin_index_list:
-                pin_id = get_pin_id(pinid, headers)
+            # pin_index_list = [pin_id_list[-1]]
+            # for pinid in pin_index_list:
+                # pin_id = get_pin_id(pinid, headers)
                 # pin_id 为返回的列表
-                pin_id_list.extend(pin_id)
-                print(pin_id_list)
-                print('--' * 50)
-                pin_index_list.append(pin_id_list[-1])
-                start_thread(pin_id_list, headers, board_data['title'])
-                print(pin_index_list)
-                print('-1-'*30)
+                # pin_id_list.extend(pin_id)
+            print(pin_id_list)
+            print('--' * 50)
+            # pin_index_list.append(pin_id_list[-1])
+            start_thread(pin_id_list, headers, board_data['title'])
+            # print(pin_index_list)
+            print('-1-'*30)
         board_id_list.append(board_data.get('board_id'))
         print(board_id_list)
 
