@@ -1,10 +1,12 @@
-from bs4 import BeautifulSoup
-import requests
-from requests.exceptions import RequestException
 import re
 import pymongo
-from multiprocessing import Pool
 import threading
+import requests
+import pandas as pd
+from multiprocessing import Pool
+from bs4 import BeautifulSoup
+from requests.exceptions import RequestException
+
 
 
 MONGO_URL = 'localhost'
@@ -44,12 +46,14 @@ def page_href(a_all):
 
 
 def page_detail(href, headers):
-    print(href)
+    # print(href)
     try:
         response = requests.get(href, headers=headers, timeout=10)
         if response.status_code == 200:
             html = response.text
             info = page_info(html)
+            # print(href)
+            # print(info)
             info_analysis(info)
         return None
     except RequestException:
@@ -98,21 +102,35 @@ def info_analysis(info):
         data['url'] = info.get('网址', '')
         data['address'] = info.get('国家', '') + info.get('州省', '') \
                           + info.get('城市', '')
-        save_to_mongdb(data, data['school name'])
+        # save_to_mongdb(data, data['school name'])
+        save_csv(data, data['school name'])
         return data
     else:
         pass
+
+
+def save_csv(data, title):
+    dataframe = pd.DataFrame.from_dict(data, orient='index').T
+    dataframe.to_csv('QM.csv', mode='a')
+    print('完成' + title + '存储')
 
 
 def main(url, headers):
     i = 0
     a_all = page_index(url, headers)
     href = page_href(a_all)
+
     for url in href:
-        i += 1
-        print(i)
-        pool = Pool(4)
-        pool.apply_async(page_detail, (url[0], headers))
+        page_detail(url[0], headers)
+        # 多进程
+        # pool = Pool(2)
+        # pool.apply_async(page_detail, (url[0], headers))
+    # 多线程
+    # for url in href:
+    #     i += 1
+    #     print(i)
+    #     pool = Pool(2)
+    #     pool.apply_async(page_detail, (url[0], headers))
     return 'SUCCESS'
 
 
