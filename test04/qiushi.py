@@ -64,6 +64,7 @@ class ThreadParse(threading.Thread):
             with self.lock:
                 self.filename.write(json.dumps(items, ensure_ascii=False) + "\n")
 
+
 CRAWL_EXIT = False
 PARSE_EXIT = False
 
@@ -75,7 +76,6 @@ def main():
     for i in range(1, 21):
         pagequeue.put(i)
     dataqueue = Queue()
-
 
     # 创建锁
     lock = threading.Lock()
