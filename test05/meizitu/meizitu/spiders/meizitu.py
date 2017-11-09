@@ -9,15 +9,14 @@ class MeizituSpider(scrapy.Spider):
     allowd_domains = ['http://www.meizitu.com']
     start_urls = ['http://www.meizit.com/']
     IMAGE_STORE = get_project_settings().get('IMAGES_STORE')
-    def parse(self, response):
 
+    def parse(self, response):
         meizi_list = response.xpath('//div[@class="sidebar"]/ul[1]/li')
         # print(meizi_list)
         for meizi in meizi_list:
             meizi_type = meizi.xpath('.//a/text()').extract()[0]
             meizi_type_url ='http://www.meizit.com' + meizi.xpath('.//a/@href').extract()[0]
             # print(meizi_type, meizi_type_url)
-
             yield Request(meizi_type_url, self.get_type_page, meta={'meizi_type': meizi_type, 'meizi_type_url':meizi_type_url})
 
     def get_type_page(self, response):
@@ -51,6 +50,7 @@ class MeizituSpider(scrapy.Spider):
             meizi_img_url = meizi_img.xpath('./@src').extract()[0]
             urls.append(meizi_img_url)
         item['image_urls'] = urls
-        yield item
+        print(item['image_urls'][0])
+        # yield item
 
 
